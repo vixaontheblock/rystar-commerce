@@ -4,8 +4,9 @@ import { CartProvider } from "@/context/cart-context";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
-  title: "Rystar Clothing",
-  description: "Independent streetwear store powered by Rystar Clothing.",
+  title: "Rystar Studios — Limited Pieces",
+  description:
+    "Rystar Studios. Limited pieces, no restock, drop culture from Panama.",
 };
 
 export default function RootLayout({
