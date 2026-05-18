@@ -235,3 +235,39 @@ select {
     opacity: 1;
   }
 }
+
+.rystar-outline-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #000000 !important;
+  color: #ffffff !important;
+  padding: 1.5rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.rystar-outline-button:hover,
+.rystar-outline-button:focus,
+.rystar-outline-button:active {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.rystar-outline-button-muted {
+  color: #a3a3a3 !important;
+}
+
+.rystar-outline-button-muted:hover,
+.rystar-outline-button-muted:focus,
+.rystar-outline-button-muted:active {
+  color: #ffffff !important;
+}
