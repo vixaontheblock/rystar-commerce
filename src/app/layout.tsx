@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "@/context/cart-context";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: "Rystar Studios — Limited Pieces",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <CartProvider>
           <SiteHeader />
           {children}
+          <SiteFooter />
         </CartProvider>
       </body>
     </html>

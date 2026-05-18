@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/context/cart-context";
 
 const menuItems = [
@@ -19,12 +19,12 @@ const menuItems = [
   {
     number: "03",
     label: "Custom",
-    href: "/shop",
+    href: "/custom",
   },
   {
     number: "04",
     label: "Contacto",
-    href: "#contact",
+    href: "/contact",
   },
   {
     number: "05",
@@ -33,33 +33,131 @@ const menuItems = [
   },
 ];
 
+function SearchIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-9 w-9"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M16 16L21 21" />
+    </svg>
+  );
+}
+
+function BagIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-8 w-8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6.5 8.5H17.5L18.5 21H5.5L6.5 8.5Z" />
+      <path d="M9 8.5V6.5C9 4.6 10.35 3 12 3C13.65 3 15 4.6 15 6.5V8.5" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-12 w-12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="square"
+    >
+      <path d="M5 5L19 19" />
+      <path d="M19 5L5 19" />
+    </svg>
+  );
+}
+
 export function SiteHeader() {
   const { totalItems } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   function closeMenu() {
     setMenuOpen(false);
   }
 
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 24);
+    }
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <div className="sticky top-0 z-50">
-        <div className="bg-white px-4 py-3 text-center text-[11px] font-black uppercase tracking-[0.28em] text-black md:text-xs">
+        <div
+          className={[
+            "bg-white px-4 text-center font-black uppercase text-black transition-all duration-300",
+            isScrolled
+              ? "py-2 text-[9px] tracking-[0.24em]"
+              : "py-3 text-[11px] tracking-[0.28em] md:text-xs",
+          ].join(" ")}
+        >
           Free shipping in Panama on orders over $100
         </div>
 
         <header className="border-b border-white/10 bg-black/95 backdrop-blur-xl">
-          <div className="mx-auto grid h-24 max-w-7xl grid-cols-3 items-center px-5">
+          <div
+            className={[
+              "mx-auto grid max-w-7xl grid-cols-3 items-center px-5 transition-all duration-300",
+              isScrolled ? "h-20" : "h-28",
+            ].join(" ")}
+          >
             <div className="flex items-center justify-start">
               <button
                 type="button"
                 onClick={() => setMenuOpen(true)}
                 aria-label="Open menu"
-                className="group flex h-12 w-12 flex-col items-start justify-center gap-2"
+                className={[
+                  "group flex flex-col items-start justify-center transition-all duration-300",
+                  isScrolled ? "h-11 w-11 gap-1.5" : "h-14 w-14 gap-2",
+                ].join(" ")}
               >
-                <span className="block h-1 w-10 rounded-full bg-white transition group-hover:w-8" />
-                <span className="block h-1 w-10 rounded-full bg-white transition group-hover:w-10" />
-                <span className="block h-1 w-10 rounded-full bg-white transition group-hover:w-6" />
+                <span
+                  className={[
+                    "block rounded-full bg-white transition-all duration-300 group-hover:w-8",
+                    isScrolled ? "h-0.5 w-8" : "h-1 w-11",
+                  ].join(" ")}
+                />
+                <span
+                  className={[
+                    "block rounded-full bg-white transition-all duration-300",
+                    isScrolled ? "h-0.5 w-8" : "h-1 w-11",
+                  ].join(" ")}
+                />
+                <span
+                  className={[
+                    "block rounded-full bg-white transition-all duration-300 group-hover:w-6",
+                    isScrolled ? "h-0.5 w-8" : "h-1 w-11",
+                  ].join(" ")}
+                />
               </button>
             </div>
 
@@ -67,16 +165,22 @@ export function SiteHeader() {
               <Link
                 href="/"
                 aria-label="Rystar Studios home"
-                className="flex h-16 w-16 items-center justify-center"
+                className={[
+                  "flex items-center justify-center transition-all duration-300",
+                  isScrolled ? "h-14 w-14" : "h-24 w-24",
+                ].join(" ")}
               >
                 <Image
                   src="/logo/rystar-logo.gif"
                   alt="Rystar Studios"
-                  width={64}
-                  height={64}
+                  width={96}
+                  height={96}
                   priority
                   unoptimized
-                  className="h-14 w-14 object-contain"
+                  className={[
+                    "object-contain transition-all duration-300",
+                    isScrolled ? "h-12 w-12" : "h-20 w-20",
+                  ].join(" ")}
                 />
               </Link>
             </div>
@@ -85,18 +189,23 @@ export function SiteHeader() {
               <Link
                 href="/shop"
                 aria-label="Search"
-                className="relative flex h-10 w-10 items-center justify-center"
+                className={[
+                  "flex items-center justify-center text-neutral-300 transition hover:text-white",
+                  isScrolled ? "h-10 w-10" : "h-12 w-12",
+                ].join(" ")}
               >
-                <span className="block h-7 w-7 rounded-full border-2 border-neutral-300" />
-                <span className="absolute bottom-1 right-1 h-4 w-0.5 rotate-[-45deg] bg-neutral-300" />
+                <SearchIcon />
               </Link>
 
               <Link
                 href="/cart"
                 aria-label="Cart"
-                className="relative flex h-10 w-10 items-center justify-center text-white"
+                className={[
+                  "relative flex items-center justify-center text-neutral-300 transition hover:text-white",
+                  isScrolled ? "h-10 w-10" : "h-12 w-12",
+                ].join(" ")}
               >
-                <span className="text-2xl leading-none">♧</span>
+                <BagIcon />
 
                 <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1 text-xs font-black text-black">
                   {totalItems}
@@ -123,10 +232,9 @@ export function SiteHeader() {
                 type="button"
                 onClick={closeMenu}
                 aria-label="Close menu"
-                className="relative flex h-20 w-20 items-center justify-center border border-white/20 transition hover:bg-white hover:text-black"
+                className="flex h-20 w-20 items-center justify-center border border-white/20 text-white transition hover:bg-white hover:text-black"
               >
-                <span className="absolute h-12 w-1 rotate-45 bg-current" />
-                <span className="absolute h-12 w-1 -rotate-45 bg-current" />
+                <CloseIcon />
               </button>
             </div>
           </div>
