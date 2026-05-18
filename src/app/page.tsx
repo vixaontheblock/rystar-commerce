@@ -1,36 +1,47 @@
 import Link from "next/link";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/product-card";
+import { HeroGlitchLoop } from "@/components/hero-glitch-loop";
+
+function DropDivider({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <section className="overflow-hidden bg-white py-4 text-black">
+      <div className="whitespace-nowrap text-2xl font-black uppercase tracking-wide md:text-4xl">
+        {children}
+      </div>
+    </section>
+  );
+}
 
 export default function HomePage() {
-  const featuredProducts = products.slice(0, 3);
+  const ss26Products = products.filter((product) =>
+    product.tags.includes("SS26")
+  );
+
+  const ss25Products = products.filter((product) =>
+    product.tags.includes("SS25")
+  );
 
   return (
     <main>
-      <section className="relative overflow-hidden bg-black px-5 py-28 md:py-36">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#202020,transparent_45%)]" />
+      <section className="relative overflow-hidden bg-black px-5 py-24 md:py-36">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#202020,transparent_48%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.85))]" />
 
-        <div className="relative mx-auto max-w-7xl pt-10">
-          <p className="mb-5 text-sm uppercase tracking-[0.45em] text-neutral-500">
-            MODA URBANA · STREET
+        <div className="relative mx-auto max-w-7xl">
+          <p className="mb-5 text-sm font-black uppercase tracking-[0.45em] text-neutral-600">
+            Moda urbana · Street
           </p>
 
-          <h1 className="max-w-5xl text-6xl font-black uppercase leading-[0.86] tracking-tight md:text-8xl">
-            Rystar <span className="block text-neutral-500">Studios</span>
+          <h1 className="max-w-5xl text-6xl font-black uppercase leading-[0.84] tracking-tight md:text-9xl">
+            Rystar <span className="block text-neutral-600">Studios</span>
           </h1>
 
-          <div className="mt-12 rounded-none border border-white/20 p-5 md:p-8">
-            <div className="flex min-h-[260px] items-center justify-center border border-white/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))]">
-              <div className="text-center">
-                <p className="text-4xl font-black uppercase tracking-wide text-white md:text-6xl">
-                  DROP001
-                </p>
-                <p className="text-4xl font-black uppercase tracking-wide text-neutral-500 md:text-6xl">
-                  SS26
-                </p>
-              </div>
-            </div>
-          </div>
+          <HeroGlitchLoop />
 
           <div className="mt-8">
             <Link
@@ -57,33 +68,101 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-5 py-20">
+      <section className="px-5 py-20 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12">
             <div className="mb-5 flex items-center gap-4">
               <span className="h-px w-16 bg-white/20" />
-              <p className="text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
-                DROP 001 — SS26
+
+              <p className="text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
+                Drop 001 — SS26
               </p>
             </div>
 
-            <h2 className="text-6xl font-black uppercase leading-[0.85] tracking-tight md:text-8xl">
-              Acid <span className="block text-neutral-500">Star</span>
-            </h2>
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div>
+                <h2 className="text-7xl font-black uppercase leading-[0.82] tracking-tight md:text-9xl">
+                  Acid <span className="block text-neutral-600">Star</span>
+                </h2>
 
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
-              Temporada 2026 · Limited pieces
-            </p>
+                <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
+                  Temporada 2026 · {ss26Products.length} piece
+                </p>
+              </div>
+
+              <p className="max-w-sm text-sm uppercase leading-7 tracking-[0.16em] text-neutral-500">
+                Nuevo drop. Una pieza. Cantidades limitadas. Cuando se agota, se
+                agota.
+              </p>
+            </div>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {featuredProducts.map((product, index) => (
+            {ss26Products.map((product, index) => (
+              <div key={product.id} className="md:col-span-1">
+                <ProductCard product={product} />
+
+                <div className="mt-4 flex items-start justify-between gap-4">
+                  <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-700">
+                    {String(index + 1).padStart(2, "0")}
+                  </p>
+
+                  <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-800">
+                    SS26
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <DropDivider>
+        DROP 001 — SS25 · TEMPORADA 2025 · TRUST THE PROCESS ·
+      </DropDivider>
+
+      <section className="px-5 py-20 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12">
+            <div className="mb-5 flex items-center gap-4">
+              <span className="h-px w-16 bg-white/20" />
+
+              <p className="text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
+                Drop 001 — SS25
+              </p>
+            </div>
+
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div>
+                <h2 className="text-7xl font-black uppercase leading-[0.82] tracking-tight md:text-9xl">
+                  Trust
+                  <span className="block text-neutral-600">The Process</span>
+                </h2>
+
+                <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
+                  Temporada 2025 · {ss25Products.length} pieces
+                </p>
+              </div>
+
+              <p className="max-w-sm text-sm uppercase leading-7 tracking-[0.16em] text-neutral-500">
+                El drop que marcó el inicio. Piezas limitadas para quienes
+                entienden el proceso.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {ss25Products.map((product, index) => (
               <div key={product.id}>
                 <ProductCard product={product} />
 
                 <div className="mt-4 flex items-start justify-between gap-4">
                   <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-700">
                     {String(index + 1).padStart(2, "0")}
+                  </p>
+
+                  <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-800">
+                    SS25
                   </p>
                 </div>
               </div>
@@ -99,20 +178,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 px-5 py-24">
+      <section className="border-y border-white/10 px-5 py-24 md:py-32">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
+          <p className="mb-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
             Sobre el drop
           </p>
 
-          <h2 className="max-w-6xl text-6xl font-black uppercase leading-[0.86] tracking-tight md:text-8xl">
+          <h2 className="max-w-6xl text-6xl font-black uppercase leading-[0.86] tracking-tight md:text-9xl">
             Hecho en pocas piezas.{" "}
-            <span className="text-neutral-700">
+            <span className="text-neutral-800">
               Para los que estuvieron desde el inicio.
             </span>
           </h2>
 
-          <div className="mt-10 max-w-4xl space-y-5 text-lg uppercase leading-8 tracking-wide text-neutral-400">
+          <div className="mt-10 max-w-4xl space-y-5 text-base uppercase leading-8 tracking-wide text-neutral-500 md:text-lg">
             <p>
               Rystar no es una marca de moda. Es un estado mental.{" "}
               <strong className="text-white">
@@ -127,51 +206,74 @@ export default function HomePage() {
       </section>
 
       <section className="divide-y divide-white/10 border-b border-white/10">
-        <div className="px-5 py-12">
+        <div className="px-5 py-12 md:py-16">
           <div className="mx-auto max-w-7xl">
             <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              002 <span className="text-4xl text-neutral-500 md:text-6xl">Drop</span>
+              002{" "}
+              <span className="text-4xl text-neutral-600 md:text-6xl">
+                Drop
+              </span>
             </p>
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
+
+            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
               Primer drop temporada 2026
             </p>
           </div>
         </div>
 
-        <div className="px-5 py-12">
+        <div className="px-5 py-12 md:py-16">
           <div className="mx-auto max-w-7xl">
             <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              0 <span className="text-4xl text-neutral-500 md:text-6xl">Restock</span>
+              0{" "}
+              <span className="text-4xl text-neutral-600 md:text-6xl">
+                Restock
+              </span>
             </p>
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
+
+            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
               Sin segunda oportunidad
             </p>
           </div>
         </div>
 
-        <div className="px-5 py-12">
+        <div className="px-5 py-12 md:py-16">
           <div className="mx-auto max-w-7xl">
             <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              100 <span className="text-4xl text-neutral-500 md:text-6xl">%</span>
+              100{" "}
+              <span className="text-4xl text-neutral-600 md:text-6xl">%</span>
             </p>
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
+
+            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
               Proceso propio
+            </p>
+          </div>
+        </div>
+
+        <div className="px-5 py-12 md:py-16">
+          <div className="mx-auto max-w-7xl">
+            <p className="text-7xl font-black uppercase leading-none md:text-9xl">
+              SS{" "}
+              <span className="text-4xl text-neutral-600 md:text-6xl">26</span>
+            </p>
+
+            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
+              Temporada 2026
             </p>
           </div>
         </div>
       </section>
 
-      <section className="px-5 py-24">
+      <section className="px-5 py-24 md:py-32">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-6 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
+          <p className="mb-6 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
             Mailing list
           </p>
 
-          <h2 className="text-6xl font-black uppercase leading-[0.85] md:text-8xl">
-            First <span className="block text-neutral-500">Access</span>
+          <h2 className="text-6xl font-black uppercase leading-[0.85] md:text-9xl">
+            First <span className="block text-neutral-600">Access</span>
           </h2>
 
-          <p className="mx-auto mt-8 max-w-2xl text-lg uppercase leading-8 tracking-wide text-neutral-400">
+          <p className="mx-auto mt-8 max-w-2xl text-base uppercase leading-8 tracking-wide text-neutral-500 md:text-lg">
             Próximos drops, piezas exclusivas y acceso anticipado. Sin spam.
             Solo lo que importa.
           </p>
@@ -179,7 +281,7 @@ export default function HomePage() {
           <form className="mt-10 border border-white/20">
             <input
               type="email"
-              placeholder="EMAIL ADDRESS"
+              placeholder="Email address"
               className="w-full border-b border-white/20 bg-black px-6 py-6 text-center text-sm font-black uppercase tracking-[0.25em] text-white outline-none placeholder:text-neutral-700"
             />
 
@@ -197,24 +299,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-5 py-20">
+      <section id="contact" className="border-t border-white/10 px-5 py-20">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-6 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
+          <p className="mb-6 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
             Need help?
           </p>
 
-          <h2 className="max-w-5xl text-6xl font-black uppercase leading-[0.85] md:text-8xl">
+          <h2 className="max-w-5xl text-6xl font-black uppercase leading-[0.85] md:text-9xl">
             Questions before the drop?
           </h2>
 
-          <p className="mt-8 text-lg uppercase tracking-wide text-neutral-500">
+          <p className="mt-8 text-base uppercase tracking-wide text-neutral-500 md:text-lg">
             Write us directly before your size disappears.
           </p>
 
           <div className="mt-10 grid gap-4">
             <a
-              href="https://wa.me/"
+              href="https://wa.me/50769115944"
               target="_blank"
+              rel="noreferrer"
               className="bg-[#25D366] px-8 py-6 text-center text-sm font-black uppercase tracking-[0.25em] text-black transition hover:brightness-110"
             >
               WhatsApp
