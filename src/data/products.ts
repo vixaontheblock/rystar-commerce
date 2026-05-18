@@ -11,8 +11,8 @@ export const products: Product[] = [
       "Acid wash tee de Rystar Studios para SS26 · Drop 001. Pieza limitada, sin restock y hecha para quienes estuvieron desde el inicio.",
     price: 3000,
     images: [
-      "/products/acid-star-front.jpg",
-      "/products/acid-star-back.jpg",
+      "/products/acid-star-front.webp",
+      "/products/acid-star-back.webp",
     ],
     tags: ["SS26", "2026", "Drop 001", "Acid Star", "No restock"],
     variants: [

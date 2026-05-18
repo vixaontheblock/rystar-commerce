@@ -3,81 +3,172 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  SOLD_OUT
+  HIDDEN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum CustomRequestStatus {
+  NEW
+  QUOTED
+  APPROVED
+  IN_PRODUCTION
+  DELIVERED
+  CANCELLED
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  season      String
+  year        Int
+  description String?
+  isActive    Boolean  @default(true)
+  position    Int      @default(0)
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
+  collectionId String?
+
   name        String
-  slug        String   @unique
+  slug        String        @unique
   description String?
   price       Int
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      ProductStatus @default(DRAFT)
 
-  variants ProductVariant[]
-  images   ProductImage[]
-  items    OrderItem[]
-}
+  tags        String[]      @default([])
 
-model ProductVariant {
-  id        String  @id @default(cuid())
-  productId String
-  size      String
-  color     String?
-  sku       String?
-  stock     Int     @default(0)
-  priceOverride Int?
+  collection  Collection?   @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  images      ProductImage[]
+  variants    ProductVariant[]
+  orderItems  OrderItem[]
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  items   OrderItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProductImage {
   id        String @id @default(cuid())
   productId String
   url       String
+  alt       String?
   position  Int    @default(0)
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductVariant {
+  id        String @id @default(cuid())
+  productId String
+
+  size      String
+  color     String?
+  sku       String?
+  stock     Int    @default(0)
+  priceOverride Int?
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
+  orderNumber String @unique
+
   customerName  String
   customerEmail String
   customerPhone String?
   shippingAddress String
 
-  status        String @default("pending")
-  paymentStatus String @default("pending")
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+
   tilopayTransactionId String?
+  tilopayReference     String?
 
   subtotal      Int
   shippingTotal Int @default(0)
   total         Int
 
+  items OrderItem[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  items OrderItem[]
 }
 
 model OrderItem {
   id        String @id @default(cuid())
   orderId   String
-  productId String
+  productId String?
   variantId String?
 
   productNameSnapshot String
-  sizeSnapshot String?
-  colorSnapshot String?
+  variantSnapshot     String?
   quantity Int
   unitPrice Int
+  lineTotal Int
 
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
-  variant ProductVariant? @relation(fields: [variantId], references: [id])
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CustomRequest {
+  id String @id @default(cuid())
+
+  customerName String?
+  customerContact String
+  customerEmail String?
+
+  garmentType String
+  color       String?
+  size        String?
+  printType   String?
+  description String
+
+  referenceImageUrl String?
+
+  status CustomRequestStatus @default(NEW)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

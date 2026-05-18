@@ -29,21 +29,23 @@ const menuItems = [
   {
     number: "05",
     label: "Search",
-    href: "/shop",
+    href: "/search",
   },
 ];
 
 function SearchIcon() {
   return (
     <svg
+      width="32"
+      height="32"
       viewBox="0 0 24 24"
       aria-hidden="true"
-      className="h-9 w-9"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className="block shrink-0"
     >
       <circle cx="10.5" cy="10.5" r="6.5" />
       <path d="M16 16L21 21" />
@@ -54,14 +56,16 @@ function SearchIcon() {
 function BagIcon() {
   return (
     <svg
+      width="30"
+      height="30"
       viewBox="0 0 24 24"
       aria-hidden="true"
-      className="h-8 w-8"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.7"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className="block shrink-0"
     >
       <path d="M6.5 8.5H17.5L18.5 21H5.5L6.5 8.5Z" />
       <path d="M9 8.5V6.5C9 4.6 10.35 3 12 3C13.65 3 15 4.6 15 6.5V8.5" />
@@ -72,13 +76,15 @@ function BagIcon() {
 function CloseIcon() {
   return (
     <svg
+      width="48"
+      height="48"
       viewBox="0 0 24 24"
       aria-hidden="true"
-      className="h-12 w-12"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"
       strokeLinecap="square"
+      className="block shrink-0"
     >
       <path d="M5 5L19 19" />
       <path d="M19 5L5 19" />
@@ -111,7 +117,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className="sticky top-0 z-50">
+      <div className="sticky top-0 z-50 bg-black">
         <div
           className={[
             "bg-white px-4 text-center font-black uppercase text-black transition-all duration-300",
@@ -161,25 +167,25 @@ export function SiteHeader() {
               </button>
             </div>
 
-            <div className="flex justify-center">
+            <div className="relative z-10 flex justify-center">
               <Link
                 href="/"
-                aria-label="Rystar Studios home"
+                aria-label="Ir al inicio de Rystar Studios"
                 className={[
-                  "flex items-center justify-center transition-all duration-300",
-                  isScrolled ? "h-14 w-14" : "h-24 w-24",
+                  "relative z-20 flex cursor-pointer items-center justify-center transition-all duration-300",
+                  isScrolled ? "h-16 w-16" : "h-28 w-28",
                 ].join(" ")}
               >
                 <Image
                   src="/logo/rystar-logo.gif"
                   alt="Rystar Studios"
-                  width={96}
-                  height={96}
+                  width={112}
+                  height={112}
                   priority
                   unoptimized
                   className={[
-                    "object-contain transition-all duration-300",
-                    isScrolled ? "h-12 w-12" : "h-20 w-20",
+                    "pointer-events-none object-contain transition-all duration-300",
+                    isScrolled ? "h-14 w-14" : "h-24 w-24",
                   ].join(" ")}
                 />
               </Link>
@@ -187,7 +193,7 @@ export function SiteHeader() {
 
             <div className="flex items-center justify-end gap-5">
               <Link
-                href="/shop"
+                href="/search"
                 aria-label="Search"
                 className={[
                   "flex items-center justify-center text-neutral-300 transition hover:text-white",

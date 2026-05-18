@@ -3,6 +3,9 @@ import { products } from "@/data/products";
 import { ProductCard } from "@/components/product-card";
 import { HeroGlitchLoop } from "@/components/hero-glitch-loop";
 
+const outlineButtonClass =
+  "!bg-black !text-white border border-white/20 px-8 py-6 text-sm font-black uppercase tracking-[0.25em] transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 focus:!bg-black focus:!text-white";
+
 function DropDivider({
   children,
 }: Readonly<{
@@ -46,7 +49,7 @@ export default function HomePage() {
           <div className="mt-8">
             <Link
               href="/shop"
-              className="group flex items-center justify-between border border-white/20 px-7 py-6 text-sm font-black uppercase tracking-[0.25em] transition hover:border-white hover:bg-white hover:text-black"
+              className={`${outlineButtonClass} group flex items-center justify-between`}
             >
               Ver catálogo
               <span className="flex h-12 w-12 items-center justify-center border border-current text-2xl transition group-hover:translate-x-1">
@@ -171,7 +174,7 @@ export default function HomePage() {
 
           <Link
             href="/shop"
-            className="mt-12 flex items-center justify-center gap-4 border border-white/15 px-8 py-6 text-center text-sm font-black uppercase tracking-[0.25em] transition hover:border-white hover:bg-white hover:text-black"
+            className={`${outlineButtonClass} mt-12 flex items-center justify-center gap-4 text-center`}
           >
             Ver catálogo completo <span>→</span>
           </Link>
@@ -325,7 +328,7 @@ export default function HomePage() {
 
             <Link
               href="/shop"
-              className="border border-white/15 px-8 py-6 text-center text-sm font-black uppercase tracking-[0.25em] transition hover:border-white hover:bg-white hover:text-black"
+              className={`${outlineButtonClass} text-center`}
             >
               Ver drop
             </Link>

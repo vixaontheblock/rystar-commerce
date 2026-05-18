@@ -1,27 +1,10 @@
-import { ShopClient } from "@/components/shop-client";
+import { ShopCollectionsClient } from "@/components/shop-collections-client";
 import { products } from "@/data/products";
 
 export default function ShopPage() {
   return (
-    <main className="px-5 py-16">
-      <section className="mx-auto max-w-7xl">
-        <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
-          Shop
-        </p>
-
-        <h1 className="text-5xl font-black uppercase tracking-tight md:text-7xl">
-          Rystar catalog
-        </h1>
-
-        <p className="mt-5 max-w-2xl text-neutral-400">
-          Explora las piezas disponibles. Esta versión todavía usa productos
-          locales; después conectamos base de datos, panel admin y TiloPay.
-        </p>
-      </section>
-
-      <div className="mt-12">
-        <ShopClient products={products} />
-      </div>
+    <main className="bg-black px-5 py-16 text-white md:py-24">
+      <ShopCollectionsClient products={products} />
     </main>
   );
 }

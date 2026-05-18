@@ -29,24 +29,24 @@ export function SiteFooter() {
               </Link>
 
               <Link
-                href="/shop"
+                href="/shop#ss26-acid-star"
+                className="block text-sm font-black uppercase tracking-[0.24em] text-neutral-500 transition hover:text-white"
+              >
+                Drop 001 - Acid Star
+              </Link>
+
+              <Link
+                href="/shop#ss25-trust-the-process"
                 className="block text-sm font-black uppercase tracking-[0.24em] text-neutral-500 transition hover:text-white"
               >
                 Drop 001 - Trust The Process
               </Link>
 
               <Link
-                href="/shop"
+                href="/custom"
                 className="block text-sm font-black uppercase tracking-[0.24em] text-neutral-500 transition hover:text-white"
               >
-                Drop 002 - Acid Star
-              </Link>
-
-              <Link
-                href="/shop"
-                className="block text-sm font-black uppercase tracking-[0.24em] text-neutral-500 transition hover:text-white"
-              >
-                Buscar
+                Custom
               </Link>
             </nav>
           </div>
@@ -58,7 +58,7 @@ export function SiteFooter() {
 
             <nav className="space-y-6">
               <Link
-                href="/#contact"
+                href="/contact"
                 className="block text-sm font-black uppercase tracking-[0.24em] text-neutral-500 transition hover:text-white"
               >
                 Contacto
@@ -112,7 +112,7 @@ export function SiteFooter() {
               </a>
 
               <a
-                href="https://wa.me/"
+                href="https://wa.me/50769115944"
                 target="_blank"
                 rel="noreferrer"
                 className="block text-sm font-black uppercase tracking-[0.24em] text-neutral-500 transition hover:text-white"
