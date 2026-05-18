@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/context/cart-context";
@@ -65,9 +66,18 @@ export function SiteHeader() {
             <div className="flex justify-center">
               <Link
                 href="/"
-                className="text-3xl font-black uppercase leading-none tracking-tight text-white"
+                aria-label="Rystar Studios home"
+                className="flex h-16 w-16 items-center justify-center"
               >
-                R
+                <Image
+                  src="/logo/rystar-logo.gif"
+                  alt="Rystar Studios"
+                  width={64}
+                  height={64}
+                  priority
+                  unoptimized
+                  className="h-14 w-14 object-contain"
+                />
               </Link>
             </div>
 
@@ -167,6 +177,7 @@ export function SiteHeader() {
               <p className="text-sm font-black uppercase tracking-[0.3em] text-neutral-600">
                 Rystar Studios
               </p>
+
               <p className="mt-3 text-sm uppercase leading-6 tracking-[0.16em] text-neutral-400">
                 No es una colección. Es el comienzo.
               </p>
