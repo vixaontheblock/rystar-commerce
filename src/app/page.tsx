@@ -10,10 +10,6 @@ export default function HomePage() {
       <section className="relative overflow-hidden bg-black px-5 py-28 md:py-36">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#202020,transparent_45%)]" />
 
-        <div className="absolute inset-x-0 top-0 bg-white py-3 text-center text-xs font-black uppercase tracking-[0.25em] text-black">
-          FREE SHIPPING IN PANAMA ON ORDERS OVER $100
-        </div>
-
         <div className="relative mx-auto max-w-7xl pt-10">
           <p className="mb-5 text-sm uppercase tracking-[0.45em] text-neutral-500">
             MODA URBANA · STREET
