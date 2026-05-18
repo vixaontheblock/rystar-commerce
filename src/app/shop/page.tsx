@@ -1,4 +1,4 @@
-import { ProductCard } from "@/components/product-card";
+import { ShopClient } from "@/components/shop-client";
 import { products } from "@/data/products";
 
 export default function ShopPage() {
@@ -15,15 +15,13 @@ export default function ShopPage() {
 
         <p className="mt-5 max-w-2xl text-neutral-400">
           Explora las piezas disponibles. Esta versión todavía usa productos
-          locales; después conectamos base de datos y panel admin.
+          locales; después conectamos base de datos, panel admin y TiloPay.
         </p>
-
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
       </section>
+
+      <div className="mt-12">
+        <ShopClient products={products} />
+      </div>
     </main>
   );
 }

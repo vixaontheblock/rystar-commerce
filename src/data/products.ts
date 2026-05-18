@@ -1,47 +1,7 @@
 import type { Product } from "@/types/product";
 
 export const products: Product[] = [
-  {
-    id: "prod-rystar-tee-black",
-    name: "Rystar Signature Tee",
-    slug: "rystar-signature-tee-black",
-    brand: "Rystar Clothing",
-    category: "T-Shirts",
-    description:
-      "Camiseta premium de algodón con fit urbano, pensada para uso diario y outfits streetwear.",
-    price: 3500,
-    images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop",
-    ],
-    tags: ["New drop", "Premium cotton"],
-    variants: [
-      { id: "var-tee-black-s", size: "S", color: "Black", stock: 6 },
-      { id: "var-tee-black-m", size: "M", color: "Black", stock: 10 },
-      { id: "var-tee-black-l", size: "L", color: "Black", stock: 8 },
-      { id: "var-tee-black-xl", size: "XL", color: "Black", stock: 4 },
-    ],
-  },
-  {
-    id: "prod-rystar-hoodie-gray",
-    name: "Rystar Core Hoodie",
-    slug: "rystar-core-hoodie-gray",
-    brand: "Rystar Clothing",
-    category: "Hoodies",
-    description:
-      "Hoodie pesado con silueta relajada, acabado minimalista y presencia premium.",
-    price: 6800,
-    images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop",
-    ],
-    tags: ["Heavyweight", "Essential"],
-    variants: [
-      { id: "var-hoodie-gray-s", size: "S", color: "Gray", stock: 3 },
-      { id: "var-hoodie-gray-m", size: "M", color: "Gray", stock: 7 },
-      { id: "var-hoodie-gray-l", size: "L", color: "Gray", stock: 5 },
-      { id: "var-hoodie-gray-xl", size: "XL", color: "Gray", stock: 2 },
-    ],
-  },
-  {
+    {
     id: "prod-rystar-cap-black",
     name: "Rystar Logo Cap",
     slug: "rystar-logo-cap-black",
@@ -56,6 +16,46 @@ export const products: Product[] = [
     tags: ["Accessory", "Logo piece"],
     variants: [
       { id: "var-cap-black-os", size: "One Size", color: "Black", stock: 12 },
+    ],
+  },
+  {
+    id: "prod-rystar-long-sleeve-white",
+    name: "Rystar Long Sleeve",
+    slug: "rystar-long-sleeve-white",
+    brand: "Rystar Clothing",
+    category: "Long Sleeves",
+    description:
+      "Long sleeve blanco con corte relajado, ideal para layering y outfits limpios.",
+    price: 4200,
+    images: [
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1200&auto=format&fit=crop",
+    ],
+    tags: ["Clean fit", "Layering"],
+    variants: [
+      { id: "var-longsleeve-white-s", size: "S", color: "White", stock: 4 },
+      { id: "var-longsleeve-white-m", size: "M", color: "White", stock: 6 },
+      { id: "var-longsleeve-white-l", size: "L", color: "White", stock: 5 },
+      { id: "var-longsleeve-white-xl", size: "XL", color: "White", stock: 2 },
+    ],
+  },
+  {
+    id: "prod-rystar-shorts-black",
+    name: "Rystar Utility Shorts",
+    slug: "rystar-utility-shorts-black",
+    brand: "Rystar Clothing",
+    category: "Shorts",
+    description:
+      "Short negro utilitario con look urbano, cómodo para diario y fácil de combinar.",
+    price: 4600,
+    images: [
+      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1200&auto=format&fit=crop",
+    ],
+    tags: ["Utility", "Streetwear"],
+    variants: [
+      { id: "var-shorts-black-s", size: "S", color: "Black", stock: 4 },
+      { id: "var-shorts-black-m", size: "M", color: "Black", stock: 5 },
+      { id: "var-shorts-black-l", size: "L", color: "Black", stock: 3 },
+      { id: "var-shorts-black-xl", size: "XL", color: "Black", stock: 1 },
     ],
   },
 ];

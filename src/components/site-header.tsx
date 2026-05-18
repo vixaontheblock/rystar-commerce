@@ -14,12 +14,17 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm text-neutral-300 md:flex">
-          <Link href="/shop" className="transition hover:text-white">
-            Shop
-          </Link>
-          <Link href="/cart" className="transition hover:text-white">
-            Cart
-          </Link>
+        <Link href="/shop" className="transition hover:text-white">
+           Shop
+        </Link>
+
+        <Link href="/cart" className="transition hover:text-white">
+          Cart
+        </Link>
+
+        <Link href="/admin" className="transition hover:text-white">
+          Admin
+        </Link>
         </nav>
 
         <Link
