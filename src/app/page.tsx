@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { products } from "@/data/products";
+import type { ReactNode } from "react";
 import { ProductCard } from "@/components/product-card";
 import { HeroGlitchLoop } from "@/components/hero-glitch-loop";
+import { getStorefrontProducts } from "@/lib/storefront-data";
+
+export const dynamic = "force-dynamic";
 
 const outlineButtonClass =
   "!bg-black !text-white border border-white/20 px-8 py-6 text-sm font-black uppercase tracking-[0.25em] transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 focus:!bg-black focus:!text-white";
@@ -9,7 +12,7 @@ const outlineButtonClass =
 function DropDivider({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <section className="overflow-hidden bg-white py-4 text-black">
@@ -20,7 +23,63 @@ function DropDivider({
   );
 }
 
-export default function HomePage() {
+function HeroEditorialSplit() {
+  return (
+    <section className="border-b border-white/10 bg-black text-white">
+      <div className="grid min-h-[calc(100svh-120px)] lg:grid-cols-[36%_64%]">
+        <div className="order-2 flex flex-col justify-between border-r border-white/10 px-5 py-10 md:px-10 lg:order-1 lg:min-h-[calc(100svh-120px)]">
+          <div>
+            <p className="mb-6 text-xs font-black uppercase tracking-[0.45em] text-neutral-600">
+              Moda urbana · Street
+            </p>
+
+            <span className="inline-flex border border-white/25 px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] text-neutral-300">
+              Unisex
+            </span>
+
+            <h1 className="mt-10 text-6xl font-black uppercase leading-[0.82] tracking-tight md:text-8xl lg:text-7xl xl:text-8xl">
+              Rystar
+              <span className="block text-neutral-700">Studios</span>
+            </h1>
+
+            <p className="mt-8 max-w-md text-sm uppercase leading-7 tracking-[0.16em] text-neutral-500">
+              Limited drops, custom pieces y cultura streetwear desde Panamá.
+              Pocas piezas. Sin restock.
+            </p>
+
+            <div className="mt-10 border border-white/25 bg-black p-2">
+              <div className="overflow-hidden border border-white/10 bg-black">
+                <HeroGlitchLoop />
+              </div>
+            </div>
+          </div>
+
+          <Link
+            href="/shop"
+            className={`${outlineButtonClass} group mt-10 flex items-center justify-between`}
+          >
+            Ver catálogo
+            <span className="flex h-12 w-12 items-center justify-center border border-current text-2xl transition group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
+        </div>
+
+        <div className="order-1 min-h-[54vh] overflow-hidden lg:order-2 lg:min-h-[calc(100svh-120px)]">
+          <img
+            src="/hero/rystar-editorial-hero.webp"
+            alt="Rystar Studios editorial campaign"
+            className="h-full w-full object-cover object-[55%_center]"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default async function HomePage() {
+  const products = await getStorefrontProducts();
+
   const ss26Products = products.filter((product) =>
     product.tags.includes("SS26")
   );
@@ -31,34 +90,7 @@ export default function HomePage() {
 
   return (
     <main>
-      <section className="relative overflow-hidden bg-black px-5 py-24 md:py-36">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#202020,transparent_48%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.85))]" />
-
-        <div className="relative mx-auto max-w-7xl">
-          <p className="mb-5 text-sm font-black uppercase tracking-[0.45em] text-neutral-600">
-            Moda urbana · Street
-          </p>
-
-          <h1 className="max-w-5xl text-6xl font-black uppercase leading-[0.84] tracking-tight md:text-9xl">
-            Rystar <span className="block text-neutral-600">Studios</span>
-          </h1>
-
-          <HeroGlitchLoop />
-
-          <div className="mt-8">
-            <Link
-              href="/shop"
-              className={`${outlineButtonClass} group flex items-center justify-between`}
-            >
-              Ver catálogo
-              <span className="flex h-12 w-12 items-center justify-center border border-current text-2xl transition group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HeroEditorialSplit />
 
       <section className="overflow-hidden bg-white py-4 text-black">
         <div className="flex w-max animate-[marquee_24s_linear_infinite] gap-8 whitespace-nowrap text-2xl font-black uppercase tracking-wide md:text-4xl">
@@ -89,7 +121,8 @@ export default function HomePage() {
                 </h2>
 
                 <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
-                  Temporada 2026 · {ss26Products.length} piece
+                  Temporada 2026 · {ss26Products.length}{" "}
+                  {ss26Products.length === 1 ? "piece" : "pieces"}
                 </p>
               </div>
 
@@ -143,7 +176,8 @@ export default function HomePage() {
                 </h2>
 
                 <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
-                  Temporada 2025 · {ss25Products.length} pieces
+                  Temporada 2025 · {ss25Products.length}{" "}
+                  {ss25Products.length === 1 ? "piece" : "pieces"}
                 </p>
               </div>
 
@@ -209,61 +243,27 @@ export default function HomePage() {
       </section>
 
       <section className="divide-y divide-white/10 border-b border-white/10">
-        <div className="px-5 py-12 md:py-16">
-          <div className="mx-auto max-w-7xl">
-            <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              002{" "}
-              <span className="text-4xl text-neutral-600 md:text-6xl">
-                Drop
-              </span>
-            </p>
+        {[
+          ["002", "Drop", "Primer drop temporada 2026"],
+          ["0", "Restock", "Sin segunda oportunidad"],
+          ["100", "%", "Proceso propio"],
+          ["SS", "26", "Temporada 2026"],
+        ].map(([number, label, note]) => (
+          <div key={`${number}-${label}`} className="px-5 py-12 md:py-16">
+            <div className="mx-auto max-w-7xl">
+              <p className="text-7xl font-black uppercase leading-none md:text-9xl">
+                {number}{" "}
+                <span className="text-4xl text-neutral-600 md:text-6xl">
+                  {label}
+                </span>
+              </p>
 
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
-              Primer drop temporada 2026
-            </p>
+              <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
+                {note}
+              </p>
+            </div>
           </div>
-        </div>
-
-        <div className="px-5 py-12 md:py-16">
-          <div className="mx-auto max-w-7xl">
-            <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              0{" "}
-              <span className="text-4xl text-neutral-600 md:text-6xl">
-                Restock
-              </span>
-            </p>
-
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
-              Sin segunda oportunidad
-            </p>
-          </div>
-        </div>
-
-        <div className="px-5 py-12 md:py-16">
-          <div className="mx-auto max-w-7xl">
-            <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              100{" "}
-              <span className="text-4xl text-neutral-600 md:text-6xl">%</span>
-            </p>
-
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
-              Proceso propio
-            </p>
-          </div>
-        </div>
-
-        <div className="px-5 py-12 md:py-16">
-          <div className="mx-auto max-w-7xl">
-            <p className="text-7xl font-black uppercase leading-none md:text-9xl">
-              SS{" "}
-              <span className="text-4xl text-neutral-600 md:text-6xl">26</span>
-            </p>
-
-            <p className="mt-8 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
-              Temporada 2026
-            </p>
-          </div>
-        </div>
+        ))}
       </section>
 
       <section className="px-5 py-24 md:py-32">
@@ -290,7 +290,7 @@ export default function HomePage() {
 
             <button
               type="button"
-              className="w-full bg-white px-6 py-6 text-sm font-black uppercase tracking-[0.25em] text-black transition hover:bg-neutral-200"
+              className="w-full border border-white/20 !bg-black px-6 py-6 text-sm font-black uppercase tracking-[0.25em] !text-white transition hover:!bg-white/10 hover:!text-white"
             >
               Join
             </button>
@@ -326,10 +326,7 @@ export default function HomePage() {
               WhatsApp
             </a>
 
-            <Link
-              href="/shop"
-              className={`${outlineButtonClass} text-center`}
-            >
+            <Link href="/shop" className={`${outlineButtonClass} text-center`}>
               Ver drop
             </Link>
           </div>

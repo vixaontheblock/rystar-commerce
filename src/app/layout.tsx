@@ -3,12 +3,15 @@ import "./globals.css";
 import { CartProvider } from "@/context/cart-context";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { IntroSplash } from "@/components/intro-splash";
 import {
   defaultSeoDescription,
   getOrganizationJsonLd,
   siteName,
   siteUrl,
 } from "@/lib/seo";
+
+const ogImage = "/og/rystar-og-v4.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -67,18 +70,18 @@ export const metadata: Metadata = {
     locale: "es_PA",
     images: [
       {
-        url: "/icon.png",
-        width: 512,
-        height: 512,
-        alt: "Rystar Studios",
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Rystar Studios — Limited Pieces",
       },
     ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Rystar Studios — Limited Pieces",
     description: defaultSeoDescription,
-    images: ["/icon.png"],
+    images: [ogImage],
   },
   robots: {
     index: true,
@@ -110,6 +113,7 @@ export default function RootLayout({
         />
 
         <CartProvider>
+          <IntroSplash />
           <SiteHeader />
           {children}
           <SiteFooter />
