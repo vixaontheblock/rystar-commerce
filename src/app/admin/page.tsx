@@ -27,8 +27,8 @@ export default async function AdminPage() {
             </h1>
 
             <p className="mt-8 max-w-2xl text-sm uppercase leading-7 tracking-[0.16em] text-neutral-500">
-              Panel conectado a la base de datos. Aquí se van a gestionar
-              productos, colecciones, inventario, pedidos y custom requests.
+              Panel conectado a la base de datos. Aquí se gestionan productos,
+              colecciones, inventario, pedidos y custom requests.
             </p>
           </div>
 
@@ -87,12 +87,21 @@ export default async function AdminPage() {
                 </h2>
               </div>
 
-              <Link
-                href="/admin/products/new"
-                className="border border-white/20 bg-black px-6 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
-              >
-                Add product
-              </Link>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Link
+                  href="/admin/orders"
+                  className="border border-white/20 bg-black px-6 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
+                >
+                  View orders
+                </Link>
+
+                <Link
+                  href="/admin/products/new"
+                  className="border border-white/20 bg-black px-6 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
+                >
+                  Add product
+                </Link>
+              </div>
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
@@ -250,17 +259,40 @@ export default async function AdminPage() {
             </section>
 
             <section className="border border-white/10 bg-white/[0.03] p-5">
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-700">
+                    Orders
+                  </p>
+
+                  <h2 className="mt-3 text-3xl font-black uppercase">
+                    Sales
+                  </h2>
+                </div>
+
+                <AdminBadge>{data.stats.orders}</AdminBadge>
+              </div>
+
+              <Link
+                href="/admin/orders"
+                className="block border border-white/10 bg-black px-4 py-4 text-center text-xs font-black uppercase tracking-[0.22em] text-neutral-400 transition hover:bg-white/10 hover:text-white"
+              >
+                View all orders
+              </Link>
+            </section>
+
+            <section className="border border-white/10 bg-white/[0.03] p-5">
               <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-700">
                 Next actions
               </p>
 
               <div className="mt-5 space-y-3">
                 {[
-                  "Crear formulario Add Product",
-                  "Crear formulario Add Collection",
-                  "Editar stock por talla",
-                  "Crear pedidos desde checkout",
-                  "Conectar TiloPay",
+                  "Cambiar estado de pedidos desde admin",
+                  "Conectar endpoint oficial de TiloPay",
+                  "Descontar inventario al confirmar pago",
+                  "Conectar Shop a productos de Neon",
+                  "Conectar Search a productos de Neon",
                   "Proteger /admin con login",
                 ].map((item: string, index: number) => (
                   <div

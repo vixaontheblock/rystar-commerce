@@ -5,50 +5,57 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { formatMoney } from "@/lib/money";
-import type { CheckoutPayload, CheckoutResponse } from "@/types/checkout";
 
 const SHIPPING = 350;
+const FREE_SHIPPING_THRESHOLD = 10000;
+
+type TilopayCheckoutResponse =
+  | {
+      ok: true;
+      orderId: string;
+      orderNumber: string;
+      paymentUrl?: string;
+      mode?: string;
+      message?: string;
+      tilopayReason?: string;
+    }
+  | {
+      ok: false;
+      message: string;
+    };
+
+const outlineButtonClass =
+  "border border-white/20 !bg-black px-8 py-6 text-sm font-black uppercase tracking-[0.25em] !text-white transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 focus:!bg-black focus:!text-white";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [pendingMessage, setPendingMessage] = useState("");
 
-  const total = subtotal + SHIPPING;
+  const qualifiesForFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+  const shippingTotal = qualifiesForFreeShipping || subtotal === 0 ? 0 : SHIPPING;
+  const total = subtotal + shippingTotal;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setPendingMessage("");
     setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
 
-    const payload: CheckoutPayload = {
-      customer: {
-        name: String(formData.get("name") ?? ""),
-        email: String(formData.get("email") ?? ""),
-        phone: String(formData.get("phone") ?? ""),
-        address: String(formData.get("address") ?? ""),
-      },
-      items: items.map((item) => ({
-        productId: item.product.id,
-        variantId: item.variant.id,
-        productName: item.product.name,
-        variantName: `${item.variant.size}${
-          item.variant.color ? ` / ${item.variant.color}` : ""
-        }`,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        lineTotal: item.lineTotal,
-      })),
-      subtotal,
-      shippingTotal: SHIPPING,
-      total,
+    const payload = {
+      customerName: String(formData.get("name") ?? "").trim(),
+      customerEmail: String(formData.get("email") ?? "").trim(),
+      customerPhone: String(formData.get("phone") ?? "").trim(),
+      shippingAddress: String(formData.get("address") ?? "").trim(),
+      items,
     };
 
     try {
-      const response = await fetch("/api/checkout/demo", {
+      const response = await fetch("/api/checkout/tilopay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,14 +63,32 @@ export default function CheckoutPage() {
         body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as CheckoutResponse;
+      const data = (await response.json()) as TilopayCheckoutResponse;
 
       if (!response.ok || !data.ok) {
-        throw new Error(data.ok ? "Checkout failed." : data.error);
+        throw new Error(data.ok ? "Checkout failed." : data.message);
       }
 
       clearCart();
-      router.push(data.redirectUrl);
+
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
+      }
+
+      if (data.mode === "tilopay_pending_configuration") {
+        setPendingMessage(
+          `Orden ${data.orderNumber} creada en Neon. Falta configurar el endpoint real de TiloPay para redirigir al pago.`
+        );
+
+        window.setTimeout(() => {
+          router.push(`/checkout/success?order=${data.orderNumber}`);
+        }, 1800);
+
+        return;
+      }
+
+      router.push(`/checkout/success?order=${data.orderNumber}`);
     } catch (checkoutError) {
       setError(
         checkoutError instanceof Error
@@ -75,26 +100,24 @@ export default function CheckoutPage() {
     }
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && !pendingMessage) {
     return (
-      <main className="px-5 py-24">
+      <main className="bg-black px-5 py-24 text-white">
         <section className="mx-auto max-w-3xl text-center">
-          <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
+          <p className="mb-4 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
             Checkout
           </p>
 
-          <h1 className="text-5xl font-black uppercase">
-            No items to checkout
+          <h1 className="text-6xl font-black uppercase leading-[0.85] tracking-tight md:text-8xl">
+            No items
+            <span className="block text-neutral-700">to checkout</span>
           </h1>
 
-          <p className="mt-5 text-neutral-400">
+          <p className="mx-auto mt-8 max-w-xl text-sm uppercase leading-7 tracking-[0.16em] text-neutral-500">
             Agrega productos al carrito antes de continuar.
           </p>
 
-          <Link
-            href="/shop"
-            className="mt-10 inline-flex rounded-full bg-white px-8 py-4 text-sm font-black uppercase tracking-wide text-black"
-          >
+          <Link href="/shop" className={`${outlineButtonClass} mt-10 inline-flex`}>
             Go shopping
           </Link>
         </section>
@@ -103,184 +126,202 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="px-5 py-16">
-      <section className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_400px]">
+    <main className="bg-black px-5 py-16 text-white md:py-24">
+      <section className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_420px]">
         <form
           onSubmit={handleSubmit}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 md:p-8"
+          className="border border-white/10 bg-white/[0.03] p-6 md:p-8"
         >
-          <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
+          <p className="mb-5 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
             Checkout
           </p>
 
-          <h1 className="text-4xl font-black uppercase md:text-5xl">
-            Delivery details
+          <h1 className="text-5xl font-black uppercase leading-[0.85] tracking-tight md:text-7xl">
+            Delivery
+            <span className="block text-neutral-700">Details</span>
           </h1>
 
-          <p className="mt-4 max-w-xl text-neutral-400">
-            Completa los datos de entrega. Por ahora este flujo simula la orden;
-            luego conectamos esta misma estructura con TiloPay.
+          <p className="mt-6 max-w-xl text-sm uppercase leading-7 tracking-[0.16em] text-neutral-500">
+            Completa los datos de entrega. Esta orden se guarda en Neon como
+            pending y queda lista para enviarse a TiloPay.
           </p>
 
           <div className="mt-8 grid gap-5">
-            <div>
-              <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-neutral-400">
-                Nombre completo
-              </label>
+            <Field label="Nombre completo">
               <input
                 required
                 name="name"
                 placeholder="Ej: Carlos Pérez"
-                className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 text-white outline-none transition placeholder:text-neutral-700 focus:border-white"
+                className="admin-input"
               />
-            </div>
+            </Field>
 
             <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-neutral-400">
-                  Correo
-                </label>
+              <Field label="Correo">
                 <input
                   required
                   name="email"
                   type="email"
                   placeholder="cliente@email.com"
-                  className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 text-white outline-none transition placeholder:text-neutral-700 focus:border-white"
+                  className="admin-input"
                 />
-              </div>
+              </Field>
 
-              <div>
-                <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-neutral-400">
-                  WhatsApp
-                </label>
+              <Field label="WhatsApp">
                 <input
                   required
                   name="phone"
                   placeholder="+507 6000-0000"
-                  className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 text-white outline-none transition placeholder:text-neutral-700 focus:border-white"
+                  className="admin-input"
                 />
-              </div>
+              </Field>
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-bold uppercase tracking-wide text-neutral-400">
-                Dirección de entrega
-              </label>
+            <Field label="Dirección de entrega">
               <textarea
                 required
                 name="address"
                 placeholder="Provincia, distrito, calle, edificio/casa, referencia..."
                 rows={5}
-                className="w-full resize-none rounded-2xl border border-white/10 bg-black px-5 py-4 text-white outline-none transition placeholder:text-neutral-700 focus:border-white"
+                className="admin-input resize-none leading-6"
               />
-            </div>
+            </Field>
 
-            <div className="rounded-2xl border border-white/10 bg-black p-5">
-              <p className="text-sm font-bold uppercase tracking-wide">
+            <div className="border border-white/10 bg-black p-5">
+              <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-600">
                 Payment method
               </p>
 
-              <div className="mt-4 rounded-2xl border border-white bg-white p-5 text-black">
+              <div className="mt-5 border border-white/15 bg-white/[0.03] p-5">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-black uppercase">TiloPay</p>
-                    <p className="mt-1 text-sm text-neutral-600">
+                    <p className="text-lg font-black uppercase">TiloPay</p>
+                    <p className="mt-2 text-sm uppercase leading-6 tracking-[0.14em] text-neutral-500">
                       Credit / debit card payment.
                     </p>
                   </div>
 
-                  <span className="rounded-full bg-black px-4 py-2 text-xs font-black uppercase text-white">
-                    Soon
+                  <span className="border border-white/15 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-neutral-400">
+                    Pending endpoint
                   </span>
                 </div>
               </div>
 
-              <p className="mt-4 text-xs leading-5 text-neutral-500">
-                En esta fase no se cobra nada. Esta sección deja preparado el
-                espacio visual para la pasarela real.
+              <p className="mt-4 text-xs uppercase leading-5 tracking-[0.18em] text-neutral-600">
+                La orden se crea en la base de datos. Cuando tengamos el endpoint
+                oficial de TiloPay, este mismo botón redirigirá al pago real.
               </p>
             </div>
 
             {error && (
-              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+              <div className="border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
                 {error}
+              </div>
+            )}
+
+            {pendingMessage && (
+              <div className="border border-yellow-400/30 bg-yellow-400/10 p-4 text-sm uppercase leading-6 tracking-[0.16em] text-yellow-100">
+                {pendingMessage}
               </div>
             )}
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-full bg-white px-8 py-4 text-sm font-black uppercase tracking-wide text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border border-white/20 !bg-black px-8 py-6 text-sm font-black uppercase tracking-[0.25em] !text-white transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isSubmitting ? "Processing order..." : "Place demo order"}
+              {isSubmitting ? "Creating order..." : "Create order"}
             </button>
           </div>
         </form>
 
-        <aside className="h-fit rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
-          <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
+        <aside className="h-fit border border-white/10 bg-white/[0.04] p-6 lg:sticky lg:top-40">
+          <p className="mb-5 text-sm font-black uppercase tracking-[0.35em] text-neutral-600">
             Summary
           </p>
 
-          <h2 className="text-2xl font-black uppercase">Order details</h2>
+          <h2 className="text-4xl font-black uppercase leading-none">
+            Order
+            <span className="block text-neutral-700">Details</span>
+          </h2>
 
-          <div className="mt-6 space-y-5">
+          <div className="mt-8 space-y-5">
             {items.map((item) => (
               <div
                 key={item.lineId}
-                className="grid grid-cols-[64px_1fr_auto] gap-4"
+                className="grid grid-cols-[76px_1fr_auto] gap-4 border border-white/10 bg-black p-3"
               >
-                <img
-                  src={item.product.images[0]}
-                  alt={item.product.name}
-                  className="aspect-square rounded-2xl object-cover"
-                />
+                <div className="bg-white">
+                  <img
+                    src={item.product.images[0]}
+                    alt={item.product.name}
+                    className="aspect-square w-full object-contain"
+                  />
+                </div>
 
                 <div>
-                  <p className="font-semibold leading-tight">
+                  <p className="text-sm font-black uppercase leading-tight">
                     {item.product.name}
                   </p>
-                  <p className="mt-1 text-sm text-neutral-500">
+
+                  <p className="mt-2 text-xs uppercase tracking-[0.18em] text-neutral-500">
                     {item.quantity} × {item.variant.size}
                     {item.variant.color ? ` / ${item.variant.color}` : ""}
                   </p>
                 </div>
 
-                <p className="text-sm font-semibold">
+                <p className="text-sm font-black">
                   {formatMoney(item.lineTotal)}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-6 space-y-4 border-t border-white/10 pt-6 text-sm">
-            <div className="flex justify-between text-neutral-400">
+          <div className="mt-8 space-y-5 border-y border-white/10 py-6">
+            <div className="flex justify-between gap-5 text-sm font-black uppercase tracking-[0.18em] text-neutral-500">
               <span>Subtotal</span>
               <span>{formatMoney(subtotal)}</span>
             </div>
 
-            <div className="flex justify-between text-neutral-400">
+            <div className="flex justify-between gap-5 text-sm font-black uppercase tracking-[0.18em] text-neutral-500">
               <span>Shipping</span>
-              <span>{formatMoney(SHIPPING)}</span>
+              <span>
+                {shippingTotal === 0 ? "Free" : formatMoney(shippingTotal)}
+              </span>
             </div>
 
-            <div className="flex justify-between border-t border-white/10 pt-4 text-lg font-bold">
+            <div className="flex justify-between gap-5 pt-4 text-xl font-black uppercase tracking-[0.12em] text-white">
               <span>Total</span>
               <span>{formatMoney(total)}</span>
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-white/10 bg-black p-4">
-            <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">
-              Next phase
-            </p>
-            <p className="mt-2 text-sm leading-6 text-neutral-400">
-              Este mismo resumen se usará para crear la orden en la base de
-              datos y enviar el monto a TiloPay.
+          <div className="mt-5 border border-white/10 bg-black p-5">
+            <p className="text-xs font-black uppercase leading-6 tracking-[0.22em] text-neutral-600">
+              Order saved in Neon · TiloPay structure ready · Shipping in Panama
+              · Limited pieces · No restock
             </p>
           </div>
         </aside>
       </section>
     </main>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="mb-3 block text-xs font-black uppercase tracking-[0.25em] text-neutral-600">
+        {label}
+      </label>
+
+      {children}
+    </div>
   );
 }
