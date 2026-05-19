@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/data/products";
 import { ProductDetailClient } from "@/components/product-detail-client";
+import { getStorefrontProductBySlug } from "@/lib/storefront-data";
+
+export const dynamic = "force-dynamic";
 
 type ProductPageProps = {
   params: Promise<{
@@ -10,11 +12,16 @@ type ProductPageProps = {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const data = await getStorefrontProductBySlug(slug);
 
-  if (!product) {
+  if (!data) {
     notFound();
   }
 
-  return <ProductDetailClient product={product} />;
+  return (
+    <ProductDetailClient
+      product={data.product}
+      relatedProducts={data.relatedProducts}
+    />
+  );
 }

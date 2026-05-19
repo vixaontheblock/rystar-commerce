@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { Product } from "@/types/product";
-import { products } from "@/data/products";
 import { formatMoney } from "@/lib/money";
 import { useCart } from "@/context/cart-context";
 import { ProductCard } from "@/components/product-card";
@@ -11,7 +10,13 @@ import { ProductCard } from "@/components/product-card";
 const outlineButtonClass =
   "!bg-black !text-white border border-white/20 px-8 py-6 text-sm font-black uppercase tracking-[0.25em] transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 focus:!bg-black focus:!text-white";
 
-export function ProductDetailClient({ product }: { product: Product }) {
+export function ProductDetailClient({
+  product,
+  relatedProducts = [],
+}: {
+  product: Product;
+  relatedProducts?: Product[];
+}) {
   const { addItem } = useCart();
 
   const firstVariant = product.variants[0];
@@ -29,13 +34,16 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
   const price = selectedVariant?.priceOverride ?? product.price;
 
-  const isSoldOut = product.variants.every((variant) => variant.stock <= 0);
+  const isSoldOut =
+    product.variants.length === 0 ||
+    product.variants.every((variant) => variant.stock <= 0);
+
   const selectedStock = selectedVariant?.stock ?? 0;
   const canAddToCart = !isSoldOut && selectedStock > 0;
 
-  const relatedProducts = useMemo(() => {
-    return products.filter((item) => item.id !== product.id).slice(0, 2);
-  }, [product.id]);
+  const suggestedProducts = relatedProducts
+    .filter((item) => item.id !== product.id)
+    .slice(0, 2);
 
   function decreaseQuantity() {
     setQuantity((current) => Math.max(1, current - 1));
@@ -157,6 +165,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
               <p className="text-sm font-black uppercase tracking-[0.3em]">
                 Talla
               </p>
+
               <span className="h-px flex-1 bg-white/10" />
             </div>
 
@@ -226,13 +235,13 @@ export function ProductDetailClient({ product }: { product: Product }) {
             type="button"
             disabled={!canAddToCart}
             onClick={handleAddToCart}
-            className="mt-8 w-full border border-white/15 bg-white px-8 py-7 text-sm font-black uppercase tracking-[0.28em] text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-neutral-600"
+            className="mt-8 w-full border border-white/20 !bg-black px-8 py-7 text-sm font-black uppercase tracking-[0.28em] !text-white transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isSoldOut ? "Agotado" : added ? "Agregado" : "Añadir al carrito"}
           </button>
 
-          <div className="mt-6 border border-white/15 bg-[#92721f] px-8 py-6 text-center text-sm font-black uppercase tracking-[0.2em] text-black opacity-70">
-            Pagar con TiloPay próximamente
+          <div className="mt-6 border border-white/15 bg-white/[0.03] px-8 py-6 text-center text-sm font-black uppercase tracking-[0.2em] text-neutral-300">
+            Pago seguro con TiloPay en checkout
           </div>
 
           <div className="mt-8 space-y-3 border-t border-white/10 pt-8">
@@ -252,7 +261,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
         </div>
       </section>
 
-      {relatedProducts.length > 0 && (
+      {suggestedProducts.length > 0 && (
         <section className="border-t border-white/10 px-5 py-20">
           <div className="mx-auto max-w-7xl">
             <h2 className="max-w-4xl text-6xl font-black uppercase leading-[0.86] tracking-tight md:text-8xl">
@@ -260,7 +269,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
             </h2>
 
             <div className="mt-12 grid gap-8 md:grid-cols-2">
-              {relatedProducts.map((item) => (
+              {suggestedProducts.map((item) => (
                 <ProductCard key={item.id} product={item} />
               ))}
             </div>
@@ -299,10 +308,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
               WhatsApp
             </a>
 
-            <Link
-              href="/shop"
-              className={`${outlineButtonClass} text-center`}
-            >
+            <Link href="/shop" className={`${outlineButtonClass} text-center`}>
               Ver drop
             </Link>
           </div>
