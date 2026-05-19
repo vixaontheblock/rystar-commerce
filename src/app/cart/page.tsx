@@ -244,10 +244,10 @@ export default function CartPage() {
             </div>
 
             <Link
-              href="/checkout"
-              className="mt-8 flex w-full items-center justify-center bg-white px-8 py-6 text-sm font-black uppercase tracking-[0.25em] text-black transition hover:bg-neutral-200"
-            >
-              Checkout →
+                href="/checkout"
+                className="mt-8 flex w-full items-center justify-center border border-white/20 !bg-black px-8 py-6 text-sm font-black uppercase tracking-[0.25em] !text-white transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 focus:!bg-black focus:!text-white"
+                >
+                Checkout →
             </Link>
 
             <div className="mt-5 border border-white/10 bg-black p-5">

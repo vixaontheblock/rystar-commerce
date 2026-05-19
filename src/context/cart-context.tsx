@@ -6,20 +6,37 @@ import {
   useEffect,
   useMemo,
   useState,
+  type ReactNode,
 } from "react";
-import { products } from "@/data/products";
-import type { Product, ProductVariant } from "@/types/product";
+
+type CartProductSnapshot = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  price: number;
+  images: string[];
+};
+
+type CartVariantSnapshot = {
+  id: string;
+  size: string;
+  color?: string | null;
+  stock: number;
+  priceOverride?: number | null;
+};
 
 type CartLine = {
-  productId: string;
-  variantId: string;
+  lineId: string;
+  product: CartProductSnapshot;
+  variant: CartVariantSnapshot;
   quantity: number;
 };
 
 type CartItem = {
   lineId: string;
-  product: Product;
-  variant: ProductVariant;
+  product: CartProductSnapshot;
+  variant: CartVariantSnapshot;
   quantity: number;
   unitPrice: number;
   lineTotal: number;
@@ -29,7 +46,11 @@ type CartContextValue = {
   items: CartItem[];
   totalItems: number;
   subtotal: number;
-  addItem: (productId: string, variantId: string) => void;
+  addItem: (
+    product: CartProductSnapshot,
+    variant: CartVariantSnapshot,
+    quantity?: number
+  ) => void;
   updateQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   clearCart: () => void;
@@ -37,22 +58,19 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const STORAGE_KEY = "rystar-cart-v1";
+const STORAGE_KEY = "rystar-cart-v2";
 
 function getLineId(productId: string, variantId: string) {
   return `${productId}:${variantId}`;
 }
 
-function findVariant(productId: string, variantId: string) {
-  const product = products.find((item) => item.id === productId);
-  const variant = product?.variants.find((item) => item.id === variantId);
+function normalizeQuantity(quantity: number, stock: number) {
+  if (stock <= 0) return 0;
 
-  if (!product || !variant) return null;
-
-  return { product, variant };
+  return Math.max(1, Math.min(Math.floor(quantity), stock));
 }
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [ready, setReady] = useState(false);
 
@@ -61,7 +79,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     if (rawCart) {
       try {
-        setLines(JSON.parse(rawCart));
+        const parsedCart = JSON.parse(rawCart) as CartLine[];
+
+        if (Array.isArray(parsedCart)) {
+          setLines(parsedCart);
+        }
       } catch {
         setLines([]);
       }
@@ -72,60 +94,69 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!ready) return;
+
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
   }, [lines, ready]);
 
   const items = useMemo<CartItem[]>(() => {
-    return lines
-      .map((line) => {
-        const found = findVariant(line.productId, line.variantId);
+    return lines.map((line) => {
+      const unitPrice = line.variant.priceOverride ?? line.product.price;
 
-        if (!found) return null;
-
-        const unitPrice =
-          found.variant.priceOverride ?? found.product.price;
-
-        return {
-          lineId: getLineId(line.productId, line.variantId),
-          product: found.product,
-          variant: found.variant,
-          quantity: line.quantity,
-          unitPrice,
-          lineTotal: unitPrice * line.quantity,
-        };
-      })
-      .filter(Boolean) as CartItem[];
+      return {
+        lineId: line.lineId,
+        product: line.product,
+        variant: line.variant,
+        quantity: line.quantity,
+        unitPrice,
+        lineTotal: unitPrice * line.quantity,
+      };
+    });
   }, [lines]);
 
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
   const subtotal = items.reduce((total, item) => total + item.lineTotal, 0);
 
-  function addItem(productId: string, variantId: string) {
-    const found = findVariant(productId, variantId);
+  function addItem(
+    product: CartProductSnapshot,
+    variant: CartVariantSnapshot,
+    quantity = 1
+  ) {
+    if (variant.stock <= 0) return;
 
-    if (!found || found.variant.stock <= 0) return;
+    const lineId = getLineId(product.id, variant.id);
+    const quantityToAdd = normalizeQuantity(quantity, variant.stock);
+
+    if (quantityToAdd <= 0) return;
 
     setLines((current) => {
-      const lineId = getLineId(productId, variantId);
-      const existingLine = current.find(
-        (line) => getLineId(line.productId, line.variantId) === lineId
-      );
+      const existingLine = current.find((line) => line.lineId === lineId);
 
       if (existingLine) {
         return current.map((line) => {
-          if (getLineId(line.productId, line.variantId) !== lineId) {
-            return line;
-          }
+          if (line.lineId !== lineId) return line;
 
           return {
             ...line,
-            quantity: Math.min(line.quantity + 1, found.variant.stock),
+            product,
+            variant,
+            quantity: normalizeQuantity(
+              line.quantity + quantityToAdd,
+              variant.stock
+            ),
           };
         });
       }
 
-      return [...current, { productId, variantId, quantity: 1 }];
+      return [
+        ...current,
+        {
+          lineId,
+          product,
+          variant,
+          quantity: quantityToAdd,
+        },
+      ];
     });
   }
 
@@ -133,16 +164,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setLines((current) =>
       current
         .map((line) => {
-          if (getLineId(line.productId, line.variantId) !== lineId) {
-            return line;
-          }
-
-          const found = findVariant(line.productId, line.variantId);
-          const maxStock = found?.variant.stock ?? 1;
+          if (line.lineId !== lineId) return line;
 
           return {
             ...line,
-            quantity: Math.max(1, Math.min(quantity, maxStock)),
+            quantity: normalizeQuantity(quantity, line.variant.stock),
           };
         })
         .filter((line) => line.quantity > 0)
@@ -150,11 +176,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }
 
   function removeItem(lineId: string) {
-    setLines((current) =>
-      current.filter(
-        (line) => getLineId(line.productId, line.variantId) !== lineId
-      )
-    );
+    setLines((current) => current.filter((line) => line.lineId !== lineId));
   }
 
   function clearCart() {

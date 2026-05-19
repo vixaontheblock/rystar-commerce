@@ -8,6 +8,9 @@ import { formatMoney } from "@/lib/money";
 import { useCart } from "@/context/cart-context";
 import { ProductCard } from "@/components/product-card";
 
+const outlineButtonClass =
+  "!bg-black !text-white border border-white/20 px-8 py-6 text-sm font-black uppercase tracking-[0.25em] transition hover:!bg-white/10 hover:!text-white active:!bg-white/10 focus:!bg-black focus:!text-white";
+
 export function ProductDetailClient({ product }: { product: Product }) {
   const { addItem } = useCart();
 
@@ -47,9 +50,24 @@ export function ProductDetailClient({ product }: { product: Product }) {
   function handleAddToCart() {
     if (!selectedVariant || !canAddToCart) return;
 
-    for (let index = 0; index < quantity; index += 1) {
-      addItem(product.id, selectedVariant.id);
-    }
+    addItem(
+      {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        category: product.category,
+        price: product.price,
+        images: product.images,
+      },
+      {
+        id: selectedVariant.id,
+        size: selectedVariant.size,
+        color: selectedVariant.color,
+        stock: selectedVariant.stock,
+        priceOverride: selectedVariant.priceOverride,
+      },
+      quantity
+    );
 
     setAdded(true);
 
@@ -249,7 +267,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
             <Link
               href="/shop"
-              className="mt-12 flex items-center justify-center border border-white/15 px-8 py-6 text-center text-sm font-black uppercase tracking-[0.25em] transition hover:border-white hover:bg-white hover:text-black"
+              className={`${outlineButtonClass} mt-12 flex items-center justify-center text-center`}
             >
               Ver catálogo completo →
             </Link>
@@ -257,10 +275,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
         </section>
       )}
 
-      <section
-        id="contact"
-        className="border-t border-white/10 px-5 py-20"
-      >
+      <section id="contact" className="border-t border-white/10 px-5 py-20">
         <div className="mx-auto max-w-7xl">
           <p className="mb-6 text-sm font-black uppercase tracking-[0.35em] text-neutral-500">
             Need help?
@@ -276,8 +291,9 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
           <div className="mt-10 grid gap-4">
             <a
-              href="https://wa.me/"
+              href="https://wa.me/50769115944"
               target="_blank"
+              rel="noreferrer"
               className="bg-[#25D366] px-8 py-6 text-center text-sm font-black uppercase tracking-[0.25em] text-black transition hover:brightness-110"
             >
               WhatsApp
@@ -285,7 +301,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
 
             <Link
               href="/shop"
-              className="border border-white/15 px-8 py-6 text-center text-sm font-black uppercase tracking-[0.25em] transition hover:border-white hover:bg-white hover:text-black"
+              className={`${outlineButtonClass} text-center`}
             >
               Ver drop
             </Link>
