@@ -11,8 +11,8 @@ export const products: Product[] = [
       "Acid wash tee de Rystar Studios para SS26 · Drop 001. Pieza limitada, sin restock y hecha para quienes estuvieron desde el inicio.",
     price: 3000,
     images: [
-      "/products/acid-star-front.webp",
-      "/products/acid-star-back.webp",
+      "/products/rystar-acid-star-tee-front.webp",
+      "/products/rystar-acid-star-tee-back.webp",
     ],
     tags: ["SS26", "2026", "Drop 001", "Acid Star", "No restock"],
     variants: [
@@ -32,7 +32,8 @@ export const products: Product[] = [
       "Pieza limitada del drop Trust The Process. Hecha para quienes creen en el proceso desde el inicio.",
     price: 4500,
     images: [
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1200&auto=format&fit=crop",
+      "/products/rystar-trust-the-process-tee-front.png",
+      "/products/rystar-trust-the-process-tee-back.png",
     ],
     tags: ["SS25", "2025", "Drop 001", "Trust The Process", "No restock"],
     variants: [
@@ -52,7 +53,8 @@ export const products: Product[] = [
       "Pieza de edición limitada de Rystar Studios. Construida como una prenda unisex para uso diario.",
     price: 4500,
     images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop",
+      "/products/rystar-tristar-essense-tee-front.png",
+      "/products/rystar-tristar-essense-tee-back.png",
     ],
     tags: ["SS25", "2025", "Drop 001", "Tristar", "Limited pieces"],
     variants: [
