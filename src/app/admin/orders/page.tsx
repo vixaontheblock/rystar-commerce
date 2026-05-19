@@ -12,6 +12,8 @@ function getStatusClass(status: string) {
     SHIPPED: "border-purple-400/30 bg-purple-400/10 text-purple-200",
     DELIVERED: "border-white/20 bg-white/10 text-white",
     CANCELLED: "border-red-400/30 bg-red-400/10 text-red-200",
+    FAILED: "border-red-400/30 bg-red-400/10 text-red-200",
+    REFUNDED: "border-orange-400/30 bg-orange-400/10 text-orange-200",
   };
 
   return classes[status] ?? "border-white/10 bg-white/5 text-neutral-400";
@@ -55,9 +57,7 @@ export default async function AdminOrdersPage() {
 
         {orders.length === 0 ? (
           <div className="border border-white/10 bg-white/[0.03] p-10 text-center">
-            <h2 className="text-4xl font-black uppercase">
-              No orders yet
-            </h2>
+            <h2 className="text-4xl font-black uppercase">No orders yet</h2>
 
             <p className="mx-auto mt-5 max-w-xl text-sm uppercase leading-7 tracking-[0.16em] text-neutral-600">
               Cuando alguien complete checkout, la orden aparecerá aquí.
@@ -162,6 +162,7 @@ export default async function AdminOrdersPage() {
                     <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-700">
                       Subtotal
                     </p>
+
                     <p className="mt-2 font-black">
                       {formatMoney(order.subtotal)}
                     </p>
@@ -171,6 +172,7 @@ export default async function AdminOrdersPage() {
                     <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-700">
                       Shipping
                     </p>
+
                     <p className="mt-2 font-black">
                       {order.shippingTotal === 0
                         ? "Free"
@@ -182,11 +184,19 @@ export default async function AdminOrdersPage() {
                     <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-700">
                       TiloPay reference
                     </p>
+
                     <p className="mt-2 font-black text-neutral-400">
                       {order.tilopayReference ?? "Pending"}
                     </p>
                   </div>
                 </div>
+
+                <Link
+                  href={`/admin/orders/${order.id}`}
+                  className="mt-5 block border border-white/10 bg-black px-5 py-4 text-center text-xs font-black uppercase tracking-[0.22em] text-neutral-400 transition hover:bg-white/10 hover:text-white"
+                >
+                  View / Edit order
+                </Link>
               </article>
             ))}
           </div>
