@@ -3,9 +3,12 @@ import "./globals.css";
 import { CartProvider } from "@/context/cart-context";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://rystarstudios.com";
+import {
+  defaultSeoDescription,
+  getOrganizationJsonLd,
+  siteName,
+  siteUrl,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -13,10 +16,22 @@ export const metadata: Metadata = {
     default: "Rystar Studios — Limited Pieces",
     template: "%s · Rystar Studios",
   },
-  description:
-    "Rystar Studios. Limited pieces, no restock, drop culture from Panama.",
-  applicationName: "Rystar Studios",
+  description: defaultSeoDescription,
+  applicationName: siteName,
   manifest: "/site.webmanifest",
+  alternates: {
+    canonical: siteUrl,
+  },
+  keywords: [
+    "Rystar Studios",
+    "Rystar Clothing",
+    "streetwear Panama",
+    "ropa streetwear Panamá",
+    "limited drops",
+    "custom clothing Panama",
+    "moda urbana Panamá",
+    "no restock",
+  ],
   icons: {
     icon: [
       {
@@ -40,23 +55,34 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Rystar Studios",
+    title: siteName,
     statusBarStyle: "black-translucent",
   },
   openGraph: {
     title: "Rystar Studios — Limited Pieces",
-    description:
-      "Rystar Studios. Limited pieces, no restock, drop culture from Panama.",
+    description: defaultSeoDescription,
     url: siteUrl,
-    siteName: "Rystar Studios",
+    siteName,
     type: "website",
     locale: "es_PA",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Rystar Studios",
+      },
+    ],
   },
   twitter: {
     card: "summary",
     title: "Rystar Studios — Limited Pieces",
-    description:
-      "Rystar Studios. Limited pieces, no restock, drop culture from Panama.",
+    description: defaultSeoDescription,
+    images: ["/icon.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -71,9 +97,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationJsonLd = getOrganizationJsonLd();
+
   return (
     <html lang="es">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+
         <CartProvider>
           <SiteHeader />
           {children}
