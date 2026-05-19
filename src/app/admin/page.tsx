@@ -87,7 +87,7 @@ export default async function AdminPage() {
                 </h2>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-3">
                 <Link
                   href="/admin/orders"
                   className="border border-white/20 bg-black px-6 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
@@ -100,6 +100,13 @@ export default async function AdminPage() {
                   className="border border-white/20 bg-black px-6 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
                 >
                   Add product
+                </Link>
+
+                <Link
+                  href="/admin/logout"
+                  className="border border-red-400/30 bg-red-400/10 px-6 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-red-200 transition hover:bg-red-400/20"
+                >
+                  Logout
                 </Link>
               </div>
             </div>
@@ -265,9 +272,7 @@ export default async function AdminPage() {
                     Orders
                   </p>
 
-                  <h2 className="mt-3 text-3xl font-black uppercase">
-                    Sales
-                  </h2>
+                  <h2 className="mt-3 text-3xl font-black uppercase">Sales</h2>
                 </div>
 
                 <AdminBadge>{data.stats.orders}</AdminBadge>
@@ -288,12 +293,12 @@ export default async function AdminPage() {
 
               <div className="mt-5 space-y-3">
                 {[
-                  "Cambiar estado de pedidos desde admin",
-                  "Conectar endpoint oficial de TiloPay",
-                  "Descontar inventario al confirmar pago",
-                  "Conectar Shop a productos de Neon",
                   "Conectar Search a productos de Neon",
-                  "Proteger /admin con login",
+                  "Conectar Home a productos de Neon",
+                  "Descontar inventario al confirmar pago",
+                  "Crear webhook de confirmación TiloPay",
+                  "Subir imágenes desde admin",
+                  "Pulir panel de custom requests",
                 ].map((item: string, index: number) => (
                   <div
                     key={item}
