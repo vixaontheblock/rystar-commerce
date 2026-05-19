@@ -4,7 +4,7 @@ import sharp from "sharp";
 import pngToIco from "png-to-ico";
 
 const root = process.cwd();
-const source = path.join(root, "public/branding-source/WHITE.png");
+const source = path.join(root, "public/branding-source/BLACK.png");
 
 async function ensureDir(filePath) {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -155,14 +155,14 @@ async function main() {
       {
         src: "/icons/icon-192.png",
         sizes: "192x192",
-        type: "image/png"
+        type: "image/png",
       },
       {
         src: "/icons/icon-512.png",
         sizes: "512x512",
-        type: "image/png"
-      }
-    ]
+        type: "image/png",
+      },
+    ],
   };
 
   await fs.writeFile(
