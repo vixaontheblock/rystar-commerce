@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-const ADMIN_SESSION_COOKIE = "rystar_admin_session";
+import { ADMIN_SESSION_COOKIE } from "@/lib/admin-auth";
 
 export async function GET() {
   const cookieStore = await cookies();
