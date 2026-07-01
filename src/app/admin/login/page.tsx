@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-const ADMIN_SESSION_COOKIE = "rystar_admin_session";
+import {
+  ADMIN_SESSION_COOKIE,
+  ADMIN_SESSION_MAX_AGE_SECONDS,
+  createAdminSessionToken,
+} from "@/lib/admin-auth";
 
 type AdminLoginPageProps = {
   searchParams: Promise<{
@@ -29,13 +32,14 @@ async function loginAction(formData: FormData) {
   }
 
   const cookieStore = await cookies();
+  const sessionToken = await createAdminSessionToken(sessionSecret);
 
-  cookieStore.set(ADMIN_SESSION_COOKIE, sessionSecret, {
+  cookieStore.set(ADMIN_SESSION_COOKIE, sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 12,
+    maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
   });
 
   const safeNext =
